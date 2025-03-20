@@ -95,7 +95,7 @@ MYSQL *connection_pool::GetConnection()
 //释放当前使用的连接
 bool connection_pool::ReleaseConnection(MYSQL *con)
 {
-	std::cout << "将mysql重新加入连接池: " << con << std::endl;
+	// std::cout << "将mysql重新加入连接池: " << con << std::endl;
 	if (NULL == con)
 	{
 		return false;
@@ -158,7 +158,7 @@ connectionRAII::connectionRAII(MYSQL **SQL, connection_pool *connPool){
 }
 
 connectionRAII::~connectionRAII(){
-	std::cout << "mysql析构了: " << (conRAII == NULL) << "  " << conRAII << std::endl;
+	// std::cout << "mysql析构了: " << (conRAII == NULL) << "  " << conRAII << std::endl;
 	poolRAII->ReleaseConnection(conRAII);
 }
 

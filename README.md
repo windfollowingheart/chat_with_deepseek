@@ -11,8 +11,9 @@ Linux下C++轻量级Web服务器, 可实现与**满血版DeepSeek-R1**对话
 * 经Webbench压力测试可以实现**上万的并发连接**数据交换
 
 ### 体验地址
-可访问: http://cpi944.yunmv.cn/ 体验
+可访问: http://cpi944.yunmv.cn/ 体验(目前只支持国内访问)
 
 ### 压力测试
 
+测试报告: [测试报告](asserts/jmeter/html/index.html)
 

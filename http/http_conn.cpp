@@ -784,7 +784,6 @@ http_conn::HTTP_CODE http_conn::do_request()
         }
         else if (m_method == POST && strncasecmp(p + 1, "v1/chat/completions", 19) == 0)
         {
-            std::cout << "聊天请求到来" << getMySQLDateTime() << std::endl;
             // 首先验证apikey
             if (m_authorization)
             {
@@ -1142,7 +1141,6 @@ http_conn::HTTP_CODE http_conn::do_request()
     else if (m_method == GET && strncasecmp(p + 1, "historys", 8) == 0)
     {
 
-        std::cout << "历史记录请求到来" << getMySQLDateTime() << std::endl;
         // 首先验证apikey
 
         if (m_authorization)
@@ -1188,14 +1186,12 @@ http_conn::HTTP_CODE http_conn::do_request()
             std::cerr << "没有验证信息" << std::endl;
             return UNAUTHORIZED_ERROR;
         }
-        std::cout << "历史记录1" << std::endl;
 
         connectionRAII mysqlcon(&mysql, m_mysql_pool);
         m_lock.lock();
         try
         {
             int ret = 1;
-            std::cout << "获取一个mysql连接, 是否为空: " << (mysql == NULL) << std::endl;
             if ((ret = mysql_ping(mysql)) != 0)
             {
                 std::cout << "mysql连接断, 重新连接: " << ret << std::endl;
@@ -1208,9 +1204,7 @@ http_conn::HTTP_CODE http_conn::do_request()
                 mysqlcon.updateConRAII(&mysql); // 这里必须更新
             }
 
-            std::cout << "mysql是否连接: " << mysql_ping(mysql) << std::endl;
             ret = mysql_query(mysql, "set names utf8");
-            std::cout << "ret: " << ret << std::endl;
 
             std::string sql_select_userid1 = "SELECT id FROM users WHERE apikey = '{}'";
             std::string sql_select_userid = fmt::format(sql_select_userid1, m_apikey);
@@ -1244,7 +1238,6 @@ http_conn::HTTP_CODE http_conn::do_request()
             }
             mysql_free_result(result);
             m_lock.unlock();
-            std::cout << "历史记录2" << std::endl;
             free(m_apikey);
             nlohmann::json data1;
             data1["data"] = chats;
@@ -1262,7 +1255,6 @@ http_conn::HTTP_CODE http_conn::do_request()
 
             // 复制字符串内容
             std::strcpy(m_response_str, json_str.c_str());
-            std::cout << "历史记录3" << std::endl;
         }
         catch (const std::runtime_error &e)
         {

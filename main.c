@@ -114,7 +114,8 @@ int main(int argc, char *argv[])
     //创建数据库连接池
     connection_pool *connPool = connection_pool::GetInstance();
     // connPool->init("1.92.101.211", "root", "123456", "deepseekanywhere", 3307, 8);
-    connPool->init("mysql.sqlpub.com", "deepseekanywhere", "zv9BdN08RwRQbIX0", "deepseekanywhere", 3306, 8);
+    connPool->init("127.0.0.1", "root", "123456", "deepseekanywhere", 3307, 30);
+    // connPool->init("mysql.sqlpub.com", "deepseekanywhere", "zv9BdN08RwRQbIX0", "deepseekanywhere", 3306, 8);
     
     //创建redis连接池
     redis_connection_pool *redis_connPool = redis_connection_pool::GetInstance();

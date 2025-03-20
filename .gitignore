@@ -2,3 +2,5 @@
 deploy
 test
 root
+*ServerLog
+2025_*
