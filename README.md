@@ -15,5 +15,12 @@ Linux下C++轻量级Web服务器, 可实现与**满血版DeepSeek-R1**对话
 
 ### 压力测试
 
-测试报告: [测试报告](asserts/jmeter/html/index.html)
+使用**Jmeter**进行压力测试:
+
+
+<div align="center">
+
+  <img src="asserts/jmeter/1.png" width="100%" />
+
+</div>
 
