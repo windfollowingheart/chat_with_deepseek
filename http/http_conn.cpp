@@ -802,7 +802,6 @@ http_conn::HTTP_CODE http_conn::do_request()
                         // 处理内存分配失败
                     }
 
-                    m_lock.lock();
                     // 如果是一个线程分段锁，就不能再threadpool初始化，不然导致死锁
                     redis_connectionRAII redislcon(&redis, m_redis_pool);
                     redisReply *reply = static_cast<redisReply *>(redisCommand(redis, "GET %s", m_apikey));
@@ -810,13 +809,11 @@ http_conn::HTTP_CODE http_conn::do_request()
                     if (reply == nullptr)
                     {
                         std::cerr << "Error executing command" << std::endl;
-                        m_lock.unlock();
                         return UNAUTHORIZED_ERROR;
                     }
                     if (reply->type == REDIS_REPLY_NIL)
                     {
                         std::cerr << "No this apikey" << std::endl;
-                        m_lock.unlock();
                         return UNAUTHORIZED_ERROR;
                     }
 
@@ -826,7 +823,6 @@ http_conn::HTTP_CODE http_conn::do_request()
 
                         if (value >= m_apikey_max)
                         {
-                            m_lock.unlock();
                             std::cerr << "超过MAX" << std::endl;
                             return TOO_MANY_REQUESTS_ERROR;
                         }
@@ -837,12 +833,10 @@ http_conn::HTTP_CODE http_conn::do_request()
                             if (reply == nullptr)
                             {
                                 std::cerr << "Error executing command" << std::endl;
-                                m_lock.unlock();
                                 return UNAUTHORIZED_ERROR;
                             }
                         }
                     }
-                    m_lock.unlock();
 
                     // 释放回复对象
                     freeReplyObject(reply);
@@ -1145,7 +1139,6 @@ http_conn::HTTP_CODE http_conn::do_request()
 
         if (m_authorization)
         {
-            std::cout << "携带了验证信息: " << m_authorization << std::endl;
             if (strlen(m_authorization) == 0 || !(strncasecmp(m_authorization, "Bearer ", 7) == 0))
             {
                 return UNAUTHORIZED_ERROR;
@@ -1154,14 +1147,15 @@ http_conn::HTTP_CODE http_conn::do_request()
             {
                 m_authorization += 7;
 
+                // if(m_apikey) {free(m_apikey);}
                 // 深拷贝
                 m_apikey = strdup(m_authorization);
                 if (m_apikey == nullptr)
                 {
+                    std::cerr << "Error executing command" << std::endl;
                     // 处理内存分配失败
                 }
 
-                m_lock.lock();
                 // 如果是一个线程分段锁，就不能再threadpool初始化，不然导致死锁
                 redis_connectionRAII redislcon(&redis, m_redis_pool);
                 redisReply *reply = static_cast<redisReply *>(redisCommand(redis, "GET %s", m_apikey));
@@ -1169,16 +1163,13 @@ http_conn::HTTP_CODE http_conn::do_request()
                 if (reply == nullptr)
                 {
                     std::cerr << "Error executing command" << std::endl;
-                    m_lock.unlock();
                     return UNAUTHORIZED_ERROR;
                 }
                 if (reply->type == REDIS_REPLY_NIL)
                 {
                     std::cerr << "No this apikey" << std::endl;
-                    m_lock.unlock();
                     return UNAUTHORIZED_ERROR;
                 }
-                m_lock.unlock();
             }
         }
         else
@@ -1186,9 +1177,7 @@ http_conn::HTTP_CODE http_conn::do_request()
             std::cerr << "没有验证信息" << std::endl;
             return UNAUTHORIZED_ERROR;
         }
-
         connectionRAII mysqlcon(&mysql, m_mysql_pool);
-        m_lock.lock();
         try
         {
             int ret = 1;
@@ -1211,6 +1200,7 @@ http_conn::HTTP_CODE http_conn::do_request()
             mysql_query(mysql, sql_select_userid.c_str());
             // 从表中检索完整的结果集
             MYSQL_RES *result_userid = mysql_store_result(mysql);
+            if (result_userid == NULL) { return UNAUTHORIZED_ERROR; }
             MYSQL_ROW row_userid = mysql_fetch_row(result_userid);
             char *user_id1 = row_userid[0];
             mysql_free_result(result_userid);
@@ -1237,8 +1227,7 @@ http_conn::HTTP_CODE http_conn::do_request()
                 chats.push_back(json1);
             }
             mysql_free_result(result);
-            m_lock.unlock();
-            free(m_apikey);
+            
             nlohmann::json data1;
             data1["data"] = chats;
 
@@ -1295,7 +1284,6 @@ http_conn::HTTP_CODE http_conn::do_request()
                     // 处理内存分配失败
                 }
 
-                m_lock.lock();
                 // 如果是一个线程分段锁，就不能再threadpool初始化，不然导致死锁
                 redis_connectionRAII redislcon(&redis, m_redis_pool);
                 redisReply *reply = static_cast<redisReply *>(redisCommand(redis, "GET %s", m_apikey));
@@ -1303,16 +1291,13 @@ http_conn::HTTP_CODE http_conn::do_request()
                 if (reply == nullptr)
                 {
                     std::cerr << "Error executing command" << std::endl;
-                    m_lock.unlock();
                     return UNAUTHORIZED_ERROR;
                 }
                 if (reply->type == REDIS_REPLY_NIL)
                 {
                     std::cerr << "No this apikey" << std::endl;
-                    m_lock.unlock();
                     return UNAUTHORIZED_ERROR;
                 }
-                m_lock.unlock();
             }
         }
         else
@@ -1328,7 +1313,6 @@ http_conn::HTTP_CODE http_conn::do_request()
         // 定义 JSON 响应体字符串
 
         connectionRAII mysqlcon(&mysql, m_mysql_pool);
-        m_lock.lock();
         mysql_query(mysql, "set names utf8");
         std::string sql_select1 = "SELECT msg_idx, msg FROM messages WHERE chat_id='{}'";
         std::string sql_select = fmt::format(sql_select1, chat_id);
@@ -1359,7 +1343,6 @@ http_conn::HTTP_CODE http_conn::do_request()
             messages.push_back(json1);
         }
         mysql_free_result(result);
-        m_lock.unlock();
         free(m_apikey);
         nlohmann::json data1;
         data1["data"] = messages;

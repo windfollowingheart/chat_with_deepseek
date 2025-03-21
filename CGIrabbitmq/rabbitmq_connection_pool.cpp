@@ -25,6 +25,7 @@ rabbitmq_connection_pool *rabbitmq_connection_pool::GetInstance()
 //构造初始化
 void rabbitmq_connection_pool::init(string url, string User, string PassWord, int Port, unsigned int MaxConn)
 {
+	return;
 	this->url = url;
 	this->Port = Port;
 	this->User = User;
