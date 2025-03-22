@@ -42,7 +42,7 @@ const char *error_413_title = "PAYLOAD_TOO_LARGE";
 const char *error_413_form = "{\"error\":{\"message\":\"upload file max limit is 10MB\"}}.\n"; // HTTP_413_Payload_Too_Large
 
 // 当浏览器出现连接重置时，可能是网站根目录出错或http响应格式出错或者访问的文件中内容完全为空
-const char *doc_root = "/home/wqt/projects/cpp/TinyWebServer/root";
+const char *doc_root = "/home/wqt/projects/cpp/chat_with_deepseek/root";
 
 // 将表中的用户名和密码放入map
 map<string, string> users;

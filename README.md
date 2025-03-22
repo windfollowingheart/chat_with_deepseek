@@ -28,3 +28,6 @@ Linux下C++轻量级Web服务器, 可实现与**满血版DeepSeek-R1**对话
 
 **由图所示:** 所有请求均正常相应。两个页面请求的平均响应时间在**30ms**左右。两个记录查询接口由于涉及数据库查询，平均响应时间在**200ms**左右。可以保证用户的良好体验。
 
+### 参考
+[TinyWebServer](https://github.com/qinguoyi/TinyWebServer/tree/raw_version)
+
