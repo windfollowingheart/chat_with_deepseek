@@ -997,6 +997,8 @@ http_conn::HTTP_CODE http_conn::do_request()
                 msg_idx = msg_idx + 1;
                 std::string sql_update = fmt::format(sql_update1, removeEmojis(response_str), create_time, chat_id, msg_idx); // 只更新assistant回答
                 int res = mysql_query(mysql, sql_update.c_str());
+                // std::cout << sql_update <<std::endl;
+                // std::cout << ret <<std::endl;
             }
             else
             {

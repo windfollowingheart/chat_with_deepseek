@@ -7,8 +7,8 @@ def generate_verification_code():
     return ''.join([str(random.randint(0, 9)) for _ in range(6)])
 def get_email_server():
     # 发件人 QQ 邮箱和授权码
-    sender_email = "xxx@qq.com"
-    authorization_code = "xxx"
+    sender_email = "2744244824@qq.com"
+    authorization_code = "lezvcfowsqekddih"
     # 连接到 QQ 邮箱的 SMTP 服务器
     server = smtplib.SMTP_SSL("smtp.qq.com", 465)
     # 登录发件人邮箱
@@ -17,7 +17,7 @@ def get_email_server():
 
 # 发送验证码邮件
 def send_verification_email(receiver_email, verification_code):
-    sender_email = "xxx@qq.com"
+    sender_email = "2744244824@qq.com"
     server = get_email_server()
     # verification_code = generate_verification_code()
     # 构建邮件内容
@@ -45,7 +45,7 @@ def send_verification_email(receiver_email, verification_code):
 
 # 示例使用
 if __name__ == "__main__":
-    receiver_email = "xxxxxx"
+    receiver_email = "wangqiteng@hust.edu.cn"
     server = get_email_server()
     # verification_code = generate_verification_code()
     for i in range(2):
