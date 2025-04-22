@@ -8,7 +8,7 @@
 #include "../lock/locker.h"
 
 
-token_pool::token_pool(list<char *> tokenList)
+token_pool::token_pool(list<vector<string>>& tokenList)
 : tokenList(tokenList)
 {
 	MaxToken = tokenList.size();
@@ -18,17 +18,17 @@ token_pool::token_pool(list<char *> tokenList)
 };
 
 token_pool::~token_pool(){
-	for (auto& token : tokenList) {
-		free(token); // 释放动态分配的内存
-	}
+	// for (auto& token : tokenList) {
+	// 	free(token); // 释放动态分配的内存
+	// }
 	tokenList.clear(); // 清空列表
 };
 
-char* token_pool::GetToken(){
-	char *token = NULL;
+vector<string> token_pool::GetToken(){
+	vector<string> token;
 
 	if (0 == tokenList.size()){
-		return NULL;
+		return token;
 	}
 
 	reserve.wait();
@@ -45,8 +45,8 @@ char* token_pool::GetToken(){
 	return token;
 };				 
 
-bool token_pool::ReleaseToken(char *token){
-	if (NULL == token){
+bool token_pool::ReleaseToken(vector<string>& token){
+	if (token.size()==0){
 		return false;
 	}
 

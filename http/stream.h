@@ -47,6 +47,29 @@ nlohmann::json get_body(const std::string& query, const std::string& user_id, co
         {"defaultHidden", false},
         {"_id", 0}
     };
+    // nlohmann::json use_think_body = {
+    //         {"icon", "https://wy-static.wenxiaobai.com/bot-capability/prod/%E6%B7%B1%E5%BA%A6%E6%80%9D%E8%80%83.png"},
+    //         {"title", "深度思考R1"},
+    //         {"defaultQuery", ""},
+    //         {"capability", "otherBot"},
+    //         {"capabilityRang", 0},
+    //         {"minAppVersion", ""},
+    //         {"botId", 200004},
+    //         {"botDesc", "擅长复杂推理与深入分析"},
+    //         {"selectedIcon", "https://wy-static.wenxiaobai.com/bot-capability/prod/%E6%B7%B1%E5%BA%A6%E6%80%9D%E8%80%83%E9%80%89%E4%B8%AD.png"},
+    //         {"botIcon", "https://platform-dev-1319140468.cos.ap-nanjing.myqcloud.com/bot/avatar/2025/02/06/612cbff8-51e6-4c6a-8530-cb551bcfda56.webp"},
+    //         {"exclusiveCapabilities", nullptr},
+    //         {"defaultSelected", true},
+    //         {"defaultHidden", false},
+    //         {"key", "deepseekR1"},
+    //         {"defaultPlaceholder", ""},
+    //         {"isPromptMenu", false},
+    //         {"subCapabilities", nullptr},
+    //         {"promptMenu", false},
+    //         {"_is_new_tag", false},
+    //         {"web_beta", ""}
+        
+    // };
 
     // 定义 use_search_body
     nlohmann::json use_search_body = {
@@ -65,6 +88,30 @@ nlohmann::json get_body(const std::string& query, const std::string& user_id, co
         {"defaultHidden", false},
         {"_id", 1}
     };
+    // nlohmann::json use_search_body = {
+        
+    //         {"icon", "https://wy-static.wenxiaobai.com/bot-capability/prod/nonetwork.png"},
+    //         {"title", "不联网"},
+    //         {"defaultQuery", ""},
+    //         {"capability", "otherBot"},
+    //         {"capabilityRang", 0},
+    //         {"minAppVersion", ""},
+    //         {"botId", 0},
+    //         {"botDesc", "专注创作流畅输出"},
+    //         {"selectedIcon", "https://wy-static.wenxiaobai.com/bot-capability/prod/nonetwork.png"},
+    //         {"botIcon", "https://platform-dev-1319140468.cos.ap-nanjing.myqcloud.com/bot/avatar/2025/02/06/612cbff8-51e6-4c6a-8530-cb551bcfda56.webp"},
+    //         {"exclusiveCapabilities", {"file", "camera", "image"}},
+    //         {"defaultSelected", false},
+    //         {"defaultHidden", false},
+    //         {"key", "no_search"},
+    //         {"defaultPlaceholder", ""},
+    //         {"isPromptMenu", false},
+    //         {"subCapabilities", nullptr},
+    //         {"promptMenu", false},
+    //         {"_is_new_tag", false},
+    //         {"web_beta", ""}
+        
+    // };
 
     // 定义 capabilities 数组
     std::vector<nlohmann::json> capabilities;
@@ -96,6 +143,75 @@ nlohmann::json get_body(const std::string& query, const std::string& user_id, co
         }},
         {"inputWay", "proactive"}
     };
+
+    // body = {
+    //     {"userId", 102741223},
+    //     {"botId", "200006"},
+    //     {"botAlias", "custom"},
+    //     {"query", "你好"},
+    //     {"isRetry", false},
+    //     {"breakingStrategy", 0},
+    //     {"isNewConversation", false},
+    //     {"mediaInfos", {}},
+    //     {"turnIndex", 1},
+    //     {"rewriteQuery", ""},
+    //     {"conversationId", "9d7b60d1-fbb9-4f4b-8e9a-55687bb7a466"},
+    //     {"attachmentInfo", 
+    //         {"url", {"infoList", nullptr}}
+    //     },
+    //     {"inputWay", "proactive"},
+    //     {"capabilities", 
+    //       {
+    //         {"icon", "https://wy-static.wenxiaobai.com/bot-capability/prod/%E6%B7%B1%E5%BA%A6%E6%80%9D%E8%80%83.png"},
+    //         {"title", "深度思考R1"},
+    //         {"defaultQuery", ""},
+    //         {"capability", "otherBot"},
+    //         {"capabilityRang", 0},
+    //         {"minAppVersion", ""},
+    //         {"botId": 200004},
+    //         {"botDesc", "擅长复杂推理与深入分析"},
+    //         {"selectedIcon", "https://wy-static.wenxiaobai.com/bot-capability/prod/%E6%B7%B1%E5%BA%A6%E6%80%9D%E8%80%83%E9%80%89%E4%B8%AD.png"},
+    //         {"botIcon", "https://platform-dev-1319140468.cos.ap-nanjing.myqcloud.com/bot/avatar/2025/02/06/612cbff8-51e6-4c6a-8530-cb551bcfda56.webp"},
+    //         {"exclusiveCapabilities", {}},
+    //         {"defaultSelected", true},
+    //         {"defaultHidden", false},
+    //         {"key", "deepseekR1"},
+    //         {"defaultPlaceholder", ""},
+    //         {"isPromptMenu", false},
+    //         {"subCapabilities", nullptr},
+    //         {"promptMenu", false},
+    //         {"_is_new_tag", false},
+    //         {"web_beta", ""}
+    //       },
+    //       {
+    //         {"icon", "https://wy-static.wenxiaobai.com/bot-capability/prod/fastsearch.png"},
+    //         {"title", "日常搜索"},
+    //         {"defaultQuery", ""},
+    //         {"capability", "otherBot"},
+    //         {"capabilityRang", 0},
+    //         {"minAppVersion", ""},
+    //         {"botId", 200007},
+    //         {"botDesc", "即时获取最新信息"},
+    //         {"selectedIcon", "https://wy-static.wenxiaobai.com/bot-capability/prod/fastsearch_active.png"},
+    //         {"botIcon", "https://platform-dev-1319140468.cos.ap-nanjing.myqcloud.com/bot/avatar/2025/02/06/612cbff8-51e6-4c6a-8530-cb551bcfda56.webp"},
+    //         {"exclusiveCapabilities", {
+    //           "file",
+    //           "camera",
+    //           "image"
+    //         }},
+    //         {"defaultSelected", true},
+    //         {"defaultHidden", false},
+    //         {"key", "quick_search"},
+    //         {"defaultPlaceholder", ""},
+    //         {"isPromptMenu", false},
+    //         {"subCapabilities": nullptr},
+    //         {"promptMenu", false},
+    //         {"_is_new_tag", false},
+    //         {"web_beta", ""}
+    //       }
+    //     },
+    //     {"pureQuery", ""}
+    // }
 
     return body;
 }
@@ -270,20 +386,22 @@ std::string parseData(const std::string& lines, std::string& event_type, std::st
 }
 
 
-int chat(std::string query, std::string model, char* token1, int epollfd, int client_fd, std::string &aaa, bool use_search=false) {
+int chat(std::string query, std::string model, vector<string> token1, int epollfd, int client_fd, std::string &aaa, bool use_search=false) {
     if(use_search){
         std::cout<<"使用搜索"<<std::endl;
     }
     std::string url = "api-bj.wenxiaobai.com";
     // std::string query = "详细介绍鲁迅";
-    std::string user_id = "103452339";
+    // std::string user_id = "103452339";
     std::string conversation_id = "";
     bool is_new_conversation = true;
     int turn_index = 0;
     bool use_think = model == "deepseek-r1" ? true : false;
     // bool use_search = true;
     std::vector<std::string> file_arr;
-    std::string token(token1);
+    std::string token(token1[0]);
+    std::string user_id(token1[1]);
+    std::string device_id(token1[2]);
     bool stream = false;
 
     // 创建套接字
@@ -327,7 +445,7 @@ int chat(std::string query, std::string model, char* token1, int epollfd, int cl
     nlohmann::json body = get_body(query, user_id, conversation_id, is_new_conversation, turn_index, use_think, use_search, file_arr);
     std::string body_str = body.dump();
     // 构建请求头
-    std::string header = jsonToSocketHeader(body_str, token);
+    std::string header = jsonToSocketHeader(body_str, token, device_id);
     // 发送请求
     std::string request =  header + body_str;
 
@@ -400,7 +518,6 @@ int chat(std::string query, std::string model, char* token1, int epollfd, int cl
                 std::string result = std::regex_replace(receivedData, pattern, "");
                 receivedData = result;
                 size_t pos = receivedData.find("\n\n");
-                
                 while (pos != std::string::npos) {
                     std::string completeMessage = receivedData.substr(0, pos);
                     std::string data_str = parseData(completeMessage, event_type, aaa);

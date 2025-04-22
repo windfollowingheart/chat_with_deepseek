@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <list>
 #include <string.h>
+#include <vector>
+#include <string>
 #include <iostream>
 #include <string>
 #include "../lock/locker.h"
@@ -13,10 +15,10 @@ using namespace std;
 class token_pool
 {
 public:
-	token_pool(list<char *> tokenList);
+	token_pool(list<vector<string>>& tokenList);
 	~token_pool();
-	char* GetToken();
-	bool ReleaseToken(char *token);
+	vector<string> GetToken();
+	bool ReleaseToken(vector<string>& token);
 	
 
 private:
@@ -26,7 +28,7 @@ private:
 
 private:
 	locker lock;
-	list<char *> tokenList; //连接池
+	list<vector<string>> tokenList; //连接池
 	sem reserve;
 
 };

@@ -87,7 +87,7 @@ json get_sign(const std::string& body) {
 }
 
 // 获取请求头
-json get_header(const std::string& body, const std::string& token) {
+json get_header(const std::string& body, const std::string& token, const std::string& device_id) {
     json sign_res = get_sign(body);
     std::string digest = sign_res["digest"];
     std::string authorization = sign_res["authorization"];
@@ -110,7 +110,7 @@ json get_header(const std::string& body, const std::string& token) {
         {"Content-type", "application/json"},
         {"x-date", x_date},
         {"X-Yuanshi-Authorization", "Bearer " + token},
-        {"X-Yuanshi-DeviceId", "htsclatat8idiem7yq2d10xu5imca9ie_0hihtqfzn266h_ogwj0u"},
+        {"X-Yuanshi-DeviceId", device_id},
         {"X-Yuanshi-TimeZone", "Asia/Shanghai"},
         {"X-Yuanshi-AppVersionName", "3.1.0"},
         {"User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 Edg/133.0.0.0"},
@@ -128,8 +128,8 @@ json get_header(const std::string& body, const std::string& token) {
 
 // 将 json 格式的请求头转换为 Socket 格式的字符串
 // std::string jsonToSocketHeader(const nlohmann::json& headers) {
-std::string jsonToSocketHeader(const std::string& body, const std::string& token) {
-    const nlohmann::json headers = get_header(body, token);
+std::string jsonToSocketHeader(const std::string& body, const std::string& token, const std::string& device_id) {
+    const nlohmann::json headers = get_header(body, token, device_id);
     std::string socketHeader;
     socketHeader += "POST /api/v1.0/core/conversation/chat/v1 HTTP/1.1\r\n";
     for (const auto& [key, value] : headers.items()) {

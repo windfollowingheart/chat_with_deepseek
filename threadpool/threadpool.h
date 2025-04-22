@@ -112,14 +112,14 @@ bool threadpool<T>::append(T *request)
     return true;
 }
 template <typename T>
-void *threadpool<T>::worker(void *arg)
+void *threadpool<T>::worker(void *arg) // 一个worker对应一个工作线程, 
 {
     threadpool *pool = (threadpool *)arg;
     pool->run();
     return pool;
 }
 template <typename T>
-void threadpool<T>::run()
+void threadpool<T>::run() // 在一个工作线程中会轮询任务队列，即list, 加锁确保线程安全
 {
     while (!m_stop)
     {

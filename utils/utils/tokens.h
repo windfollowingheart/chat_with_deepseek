@@ -4,11 +4,13 @@
 #include <string>
 #include <fstream>
 #include <list>
+#include <string>
+#include <vector>
 #include "../nolhmann/json.h"
 
-list<char*> getTokenList() {
+list<vector<string>> getTokenList() {
     // 打开 JSON 文件
-    list<char*> tokenList;
+    list<vector<string>> tokenList;
     std::string path = "/home/wqt/projects/cpp/chat_with_deepseek/test/test_json/visitor_info.json";
     std::ifstream file(path);
     if (!file.is_open()) {
@@ -28,15 +30,20 @@ list<char*> getTokenList() {
         }
 
         std::cout <<json_data.size()<<std::endl;
-        list<char*> tokenList;
+        list<vector<string>> tokenList;
         // 遍历 JSON 数组
         for (const auto& item : json_data) {
             // 假设数组中的每个元素是一个对象
             if (item.is_object()) {
                 // 访问对象中的字段
                 std::string token = item.value("token", "Unknown");
-                char* tokenCStr = strdup(token.c_str());
-                tokenList.push_back(tokenCStr);
+                int userid = item.value("userid", 0);
+                std::string user_id = std::to_string(userid);
+                std::string device_id = item.value("deviceId", "Unknown");
+                // char* tokenCStr = strdup(token.c_str());
+                vector<string> token1 = {token, user_id, device_id};
+                // tokenList.push_back(tokenCStr);
+                tokenList.push_back(token1);
                 // int age = item.value("age", 0);
                 // std::cout << "Name: " << name << ", Age: " << age << std::endl;
                 // std::cout  << name << "\n" << std::endl;

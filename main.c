@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <cassert>
 #include <list>
+#include <string>
+#include <vector>
 #include <sys/epoll.h>
 
 #include "./lock/locker.h"
@@ -135,7 +137,8 @@ int main(int argc, char *argv[])
     getparseresult_connPool->init(3);
 
     //创建token池 
-    list<char*> tokenList = getTokenList();
+    list<vector<string>> tokenList = getTokenList();
+    // list<char*> tokenList = getTokenList();
     token_pool tokenPool(tokenList);    
     // connPool->init("1.92.101.211", "root", "123456", "yourdb", 3306, 1);
     // connPool->init("1.92.101.211", "root", "123456", "deepseekanywhere", 3306, 1);
@@ -240,7 +243,7 @@ int main(int argc, char *argv[])
                     LOG_ERROR("%s", "Internal server busy");
                     continue;
                 }
-                users[connfd].init(connfd, client_address);
+                users[connfd].init(connfd, client_address); // 前面调用accept连接已经建立，然后这里init主要将sockfd存放起来，然后注册到epoll中监听
 
                 //初始化client_data数据
                 //创建定时器，设置回调函数和超时时间，绑定用户数据，将定时器添加到链表中
@@ -342,7 +345,7 @@ int main(int argc, char *argv[])
                 {
                     LOG_INFO("deal with the client(%s)", inet_ntoa(users[sockfd].get_address()->sin_addr));
                     Log::get_instance()->flush();
-                    //若监测到读事件，将该事件放入请求队列
+                    //若监测到读事件，将该事件放入请求队列, 交给线程池中的线程来完成
                     pool->append(users + sockfd);
 
                     //若有数据传输，则将定时器往后延迟3个单位
@@ -396,7 +399,7 @@ int main(int argc, char *argv[])
         }
         if (timeout)
         {
-            timer_handler();
+            timer_handler(); // 清除非活跃连接
             timeout = false;
         }
     }

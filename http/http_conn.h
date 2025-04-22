@@ -11,6 +11,8 @@
 #include <assert.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <string>
+#include <vector>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -132,7 +134,8 @@ public:
     static int m_user_count;
     MYSQL *mysql;
     connection_pool *m_mysql_pool;
-    char *m_token;
+    // char *m_token;
+    vector<string> m_token;
     token_pool *m_token_pool;
     redisContext *redis;
     redis_connection_pool *m_redis_pool;
@@ -142,7 +145,7 @@ public:
     uploadfile_connection_pool *m_uploadfileconn_pool;
     getParseResultConn* getparseresultconn;
     getparseresult_connection_pool *m_getparseresult_pool;
-    int m_apikey_max = 10;
+    int m_apikey_max = 10; // 最大apikey并发
 
 private:
     int m_sockfd;

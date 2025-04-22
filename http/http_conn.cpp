@@ -49,8 +49,8 @@ const char *error_413_form = "{\"error\":{\"message\":\"upload file max limit is
 const char *doc_root = "/home/wqt/projects/cpp/chat_with_deepseek/root";
 
 // 将表中的用户名和密码放入map
-map<string, string> users;
-vector<string> apikeys;
+map<string, string> users; // 全局变量，所有的http_conn对象共享一份，只用初始化一份
+vector<string> apikeys; // 
 locker m_lock;
 
 void http_conn::initmysql_result(connection_pool *connPool)
