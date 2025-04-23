@@ -29,6 +29,7 @@ void dcr_apikey(redisContext* redis, char* m_apikey){
     // std::cerr << m_apikey << std::endl;
     if (reply->type == REDIS_REPLY_NIL) {
         std::cerr << "No this apikey" << std::endl;
+        std::cerr << m_apikey << std::endl;
     }
     if(reply->type == REDIS_REPLY_STRING){
         int value = std::stoi(reply->str);

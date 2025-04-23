@@ -145,7 +145,7 @@ public:
     uploadfile_connection_pool *m_uploadfileconn_pool;
     getParseResultConn* getparseresultconn;
     getparseresult_connection_pool *m_getparseresult_pool;
-    int m_apikey_max = 10; // 最大apikey并发
+    long m_apikey_max = 1000000000000; // 最大apikey并发
 
 private:
     int m_sockfd;

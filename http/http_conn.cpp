@@ -855,7 +855,7 @@ http_conn::HTTP_CODE http_conn::do_request()
                     }
                     if (reply->type == REDIS_REPLY_NIL)
                     {
-                        std::cerr << "No this apikey" << std::endl;
+                        std::cerr << "No this apikey 1" << std::endl;
                         return UNAUTHORIZED_ERROR;
                     }
 
@@ -863,7 +863,8 @@ http_conn::HTTP_CODE http_conn::do_request()
                     {
                         int value = std::stoi(reply->str);
 
-                        if (value >= m_apikey_max)
+                        // if (value >= m_apikey_max)
+                        if (false)
                         {
                             std::cerr << "超过MAX" << std::endl;
                             return TOO_MANY_REQUESTS_ERROR;
@@ -964,6 +965,213 @@ http_conn::HTTP_CODE http_conn::do_request()
             m_lock.lock();
             std::string create_time = getMySQLDateTime();
             mysql_query(mysql, "set names utf8mb4");
+            if (is_new)
+            {
+                std::string sql_insert1 = "INSERT INTO chats(chat_id, chat_name, create_time, update_time, user_id) VALUES ";
+                std::string values_template = "('{}','{}','{}','{}',{})";
+                std::string chat_name1;
+                // chat_id = gen_uuid();
+                if (content.size() > 10)
+                {
+                    chat_name1 = content.substr(0, 10);
+                }
+                else
+                {
+                    chat_name1 = content;
+                }
+                std::string chat_name = removeEmojis(chat_name1);
+                std::string values1 = fmt::format(values_template, chat_id, removeEmojis(content), create_time, create_time, user_id); // 用户提问
+                std::string sql_insert = sql_insert1 + values1;
+                
+                int res = mysql_query(mysql, sql_insert.c_str());
+            }
+            else
+            {
+                std::string sql_update1 = "UPDATE chats SET update_time = '{}' WHERE chat_id = '{}'";
+                std::string sql_update = fmt::format(sql_update1, create_time, chat_id); // 用户提问
+                int res = mysql_query(mysql, sql_update.c_str());
+            }
+
+            if (is_replay)
+            {
+                std::string sql_update1 = "UPDATE messages SET msg = '{}', update_time = '{}' WHERE chat_id = '{}' AND msg_idx = {}";
+                msg_idx = msg_idx + 1;
+                std::string sql_update = fmt::format(sql_update1, removeEmojis(response_str), create_time, chat_id, msg_idx); // 只更新assistant回答
+                int res = mysql_query(mysql, sql_update.c_str());
+                // std::cout << sql_update <<std::endl;
+                // std::cout << ret <<std::endl;
+            }
+            else
+            {
+                std::string sql_insert1 = "INSERT INTO messages(chat_id, msg_idx, idx, file_refs, user_id, create_time, update_time, msg) VALUES ";
+                std::string values_template = "('{}',{},{},'{}',{},'{}','{}','{}')";
+                std::string values1 = fmt::format(values_template, chat_id, msg_idx, idx, file_refs.dump(), user_id, create_time, create_time, removeEmojis(content)); // 用户提问
+                msg_idx = msg_idx + 1;
+                std::string values2 = fmt::format(values_template, chat_id, msg_idx, idx, file_refs.dump(), user_id, create_time, create_time, removeEmojis(response_str)); // assistant回答
+                std::string sql_insert = sql_insert1 + values1 + ", " + values2;
+                int res = mysql_query(mysql, sql_insert.c_str());
+            }
+            m_lock.unlock();
+
+            return NO_REQUEST;
+        }
+        else if (m_method == POST && strncasecmp(p + 1, "v1/chat/test_completions", 24) == 0)
+        {
+            // 首先验证apikey
+            if (m_authorization)
+            {
+                if (strlen(m_authorization) == 0 || !(strncasecmp(m_authorization, "Bearer ", 7) == 0))
+                {
+                    return UNAUTHORIZED_ERROR;
+                }
+                else
+                {
+                    m_authorization += 7;
+
+                    // 深拷贝
+                    // m_lock.lock();
+                    // m_apikey = strdup(m_authorization);
+                    // m_lock.unlock();
+                    m_apikey = m_authorization;
+                    if (m_apikey == nullptr)
+                    {
+                        // 处理内存分配失败
+                    }
+
+                    // 如果是一个线程分段锁，就不能再threadpool初始化，不然导致死锁
+                    redis_connectionRAII redislcon(&redis, m_redis_pool);
+
+                    m_lock.lock();
+                    redisReply *reply = static_cast<redisReply *>(redisCommand(redis, "GET %s", m_apikey));
+
+                    if (reply == nullptr)
+                    {
+                        m_lock.unlock();
+                        std::cerr << "Error executing command" << std::endl;
+                        return UNAUTHORIZED_ERROR;
+                    }
+                    if (reply->type == REDIS_REPLY_NIL)
+                    {
+                        m_lock.unlock();
+                        std::cerr << "No this apikey 1" << std::endl;
+                        return UNAUTHORIZED_ERROR;
+                    }
+
+                    // if (reply->type == REDIS_REPLY_STRING)
+                    // {
+                    //     int value = std::stoi(reply->str);
+
+                    //     // if (value >= m_apikey_max)
+                    //     if (false)
+                    //     {
+                    //         m_lock.unlock();
+                    //         std::cerr << "超过MAX" << std::endl;
+                    //         return TOO_MANY_REQUESTS_ERROR;
+                    //     }
+                    //     else
+                    //     {
+                    //         // 这里也要加锁啊
+                    //         // m_lock.lock();
+                    //         value++;
+                    //         reply = static_cast<redisReply *>(redisCommand(redis, "SET %s %d", m_apikey, value));
+                    //         m_lock.unlock();
+                    //         if (reply == nullptr)
+                    //         {
+                    //             std::cerr << "Error executing command" << std::endl;
+                    //             return UNAUTHORIZED_ERROR;
+                    //         }
+                    //     }
+                    // }
+                    m_lock.unlock();
+
+                    // 释放回复对象
+                    freeReplyObject(reply);
+                    // m_lock.unlock();
+                }
+            }
+            else
+            {
+                return UNAUTHORIZED_ERROR;
+            }
+
+            // 定义 JSON 响应体字符串
+            nlohmann::json data = nlohmann::json::parse(m_string);
+            std::vector<nlohmann::json> contents = data["messages"].get<std::vector<nlohmann::json>>();
+            std::string model = data["model"].get<std::string>();
+            std::string chat_id = data["chat_id"].get<std::string>();
+            int user_id = data["user_id"].get<int>();
+            int msg_idx = data["msg_idx"].get<int>();
+            int idx = data["idx"].get<int>();
+            bool is_new = data["is_new"].get<bool>();
+            bool is_replay = data["is_replay"].get<bool>();
+            nlohmann::json file_refs = data["file_refs"].get<nlohmann::json>();
+            bool search = false;
+            if (data.contains("search") && data["search"].is_boolean())
+            {
+                search = data["search"].get<bool>();
+            }
+            if (model != "deepseek-v3" && model != "deepseek-r1")
+            {
+                // m_lock.lock();
+                // dcr_apikey(redis, m_apikey);
+                // free(m_apikey);
+                // m_lock.unlock();
+                
+                return UNPROCESSABLE_ENTITY_ERROR;
+            }
+            // m_lock.lock();
+            // 这里使用完redis后先手动释放,因为后续chat是耗时操作
+            // m_redis_pool->ReleaseConnection(redis);
+            // std::destroy_at(redislcon)
+            // 这里还要释放一下锁，不然后续依然没法获取redis
+            // m_lock.unlock();
+            // 这里不用手动释放，是因为if中定义的变量再出if后会自动析构。
+
+            std::string content = contents[0]["content"].get<std::string>();
+            m_token = m_token_pool->GetToken();
+            std::string response_str; // 记录响应消息
+            chat(content, model, m_token, m_epollfd, m_sockfd, response_str, search);
+            m_token_pool->ReleaseToken(m_token);
+
+            while (true)
+            {
+                m_lock.lock();
+                if (m_redis_pool->GetFreeConn() <= 0)
+                {
+                    // 这里释放锁，避免死锁
+                    m_lock.unlock();
+                    sleep(1);
+                    continue;
+                }
+                // 这里再获取一个redis
+                redis_connectionRAII redislcon(&redis, m_redis_pool);
+                // dcr_apikey(redis, m_apikey);
+                m_lock.unlock();
+                break;
+            }
+
+            // m_lock.lock();
+            // free(m_apikey);
+            // m_lock.unlock();
+
+            // 最终要将消息记录存到数据库:
+            // 如果chat_id为“”表示是新的对话
+            // if(chat_id.size()==0){
+            //     chat_id = gen_uuid();
+            // }
+            connectionRAII mysqlcon(&mysql, m_mysql_pool);
+            int ret = 1;
+            if ((ret = mysql_ping(mysql)) != 0)
+            {
+                std::cout << "mysql连接断, 重新连接: " << ret << std::endl;
+                mysql = NULL;
+                mysql = m_mysql_pool->get_conn();
+                mysqlcon.updateConRAII(&mysql); // 这里必须更新
+            }
+            m_lock.lock();
+            std::string create_time = getMySQLDateTime();
+            mysql_query(mysql, "set names utf8mb4");
+            
             if (is_new)
             {
                 std::string sql_insert1 = "INSERT INTO chats(chat_id, chat_name, create_time, update_time, user_id) VALUES ";
